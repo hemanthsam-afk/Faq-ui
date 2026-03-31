@@ -1,0 +1,1108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Career Prep Portal — Interview Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0f; 
+    --surface: rgba(22, 22, 30, 0.6);
+    --surface2: rgba(35, 35, 50, 0.8);
+    --border: rgba(255, 255, 255, 0.08);
+    --text: #e2e2e9;
+    --muted: #8e8e9c;
+    --accent: #4d7cff; 
+    --accent-glow: rgba(77, 124, 255, 0.3);
+    --nav-h: 75px;
+    --trans: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --green: #22c55e;
+    --red: #ff4d4d;
+  }
+
+  [data-theme="light"] {
+    --bg: #f4f4f9;
+    --surface: rgba(255, 255, 255, 0.9);
+    --surface2: rgba(230, 230, 240, 0.9);
+    --border: rgba(0, 0, 0, 0.1);
+    --text: #1a1a2e;
+    --muted: #66667a;
+    --accent: #2563eb;
+    --accent-glow: rgba(37, 99, 235, 0.15);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  /* ── Navbar ── */
+  .navbar {
+    position: sticky; top: 0; z-index: 100;
+    height: var(--nav-h);
+    background: var(--surface);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 32px;
+  }
+  .nav-logo { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--text); }
+  .nav-right-actions { display: flex; align-items: center; gap: 14px; }
+  
+  .search-container {
+    display: flex; align-items: center;
+    background: var(--surface2);
+    border-radius: 50px;
+    border: 1px solid var(--border);
+    transition: var(--trans);
+    width: 42px; height: 42px;
+    overflow: hidden;
+  }
+  .search-container.active { width: 240px; border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+  .search-trigger {
+    background: none; border: none; font-size: 17px;
+    min-width: 42px; height: 42px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: 0.3s;
+  }
+  .search-trigger:hover { transform: scale(1.15); }
+
+  .nav-search-input {
+    background: none; border: none; color: var(--text);
+    padding: 0 12px 0 2px; width: 0; opacity: 0;
+    outline: none; transition: var(--trans); font-size: 14px;
+  }
+  .search-container.active .nav-search-input { width: 100%; opacity: 1; }
+
+  .mode-toggle-btn {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    width: 42px; height: 42px; border-radius: 50%;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 17px; transition: 0.3s;
+  }
+  .mode-toggle-btn:hover { transform: rotate(15deg); border-color: var(--accent); background: var(--accent-glow); }
+
+  .btn-action {
+    background: var(--accent);
+    color: #fff; border: none; border-radius: 30px;
+    padding: 10px 22px; font-size: 12px; font-weight: 700;
+    transition: 0.3s; text-transform: uppercase; cursor: pointer;
+  }
+  .btn-action:hover { transform: translateY(-2px); box-shadow: 0 8px 20px var(--accent-glow); }
+
+  .user-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2px solid var(--accent);
+    cursor: pointer; object-fit: cover;
+    transition: 0.3s;
+  }
+  .user-avatar:hover { transform: scale(1.1); box-shadow: 0 0 10px var(--accent-glow); }
+
+  /* ── Sidebar ── */
+  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; }
+  .sidebar-overlay.active { display: block; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 280px; z-index: 201;
+    background: var(--surface); backdrop-filter: blur(20px);
+    border-right: 1px solid var(--border);
+    transform: translateX(-100%); transition: transform 0.4s ease;
+    display: flex; flex-direction: column;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-item {
+    display: block; width: 100%; padding: 18px 25px;
+    background: none; border: none; text-align: left;
+    color: var(--text); font-weight: 500; cursor: pointer; transition: 0.3s;
+  }
+  .sidebar-item:hover { background: var(--accent-glow); padding-left: 35px; }
+  .sidebar-item.active { color: var(--accent); background: var(--accent-glow); border-left: 4px solid var(--accent); }
+
+  /* Progress bar in sidebar */
+  .sidebar-progress { padding: 20px 25px; margin-top: auto; border-top: 1px solid var(--border); }
+  .sidebar-progress p { font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+  .prog-bar { height: 6px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+  .prog-bar-fill { height: 100%; background: var(--accent); border-radius: 10px; transition: width 0.5s ease; }
+  .prog-count { font-size: 11px; color: var(--accent); margin-top: 6px; font-weight: 700; }
+
+  /* ── Page Content ── */
+  .page { display: none; padding: 80px 40px; max-width: 900px; margin: 0 auto; }
+  .page.active { display: block; animation: fadeIn 0.6s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+  h1 { font-family: 'DM Serif Display', serif; font-size: 52px; line-height: 1.1; margin-bottom: 10px; }
+  h1 em { font-style: italic; color: var(--accent); }
+  .section-title { 
+    font-size: 13px; text-transform: uppercase; letter-spacing: 2px; 
+    color: var(--accent); margin: 45px 0 15px; font-weight: 800; opacity: 0.9;
+  }
+
+  /* ── Stats Bar ── */
+  .stats-bar {
+    display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap;
+  }
+  .stat-chip {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 20px;
+    display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 100px;
+  }
+  .stat-chip .stat-num { font-size: 22px; font-weight: 800; color: var(--accent); font-family: 'DM Serif Display'; }
+  .stat-chip .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── Category Filter Chips ── */
+  .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+  .filter-chip {
+    padding: 6px 16px; border-radius: 50px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--muted); cursor: pointer;
+    font-size: 12px; font-weight: 600; transition: 0.2s; white-space: nowrap;
+  }
+  .filter-chip:hover, .filter-chip.active { 
+    border-color: var(--accent); color: var(--accent); background: var(--accent-glow); 
+  }
+
+  /* ── FAQ UI ── */
+  .faq-item { 
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px; 
+    margin-bottom: 12px; overflow: hidden; transition: 0.3s ease; cursor: pointer;
+    position: relative;
+  }
+  .faq-item:hover { border-color: var(--accent); transform: scale(1.01); box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+  .faq-q { padding: 22px; display: flex; align-items: flex-start; gap: 18px; font-weight: 600; font-size: 16px; transition: 0.3s; }
+  .q-num { color: var(--accent); font-family: 'DM Serif Display'; font-size: 20px; opacity: 0.5; }
+  .faq-a { max-height: 0; padding: 0 22px 0 60px; color: var(--muted); overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; line-height: 1.7; border-top: 1px solid transparent; }
+  .faq-item.active .faq-a, .master-unlocked .faq-a { 
+    max-height: 400px; padding: 0 22px 22px 60px; border-top-color: var(--border); 
+  }
+  /* Bookmark + done button in FAQ */
+  .faq-actions { display: flex; gap: 8px; margin-left: auto; align-items: center; }
+  .faq-btn {
+    background: none; border: 1px solid var(--border); border-radius: 8px;
+    padding: 4px 10px; font-size: 13px; cursor: pointer; color: var(--muted);
+    transition: 0.2s;
+  }
+  .faq-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .faq-btn.bookmarked { color: #f59e0b; border-color: #f59e0b; }
+  .faq-btn.done { color: var(--green); border-color: var(--green); }
+
+  /* ── Modal ── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(10px); }
+  .modal-overlay.active { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border); padding: 40px; border-radius: 24px; width: 90%; max-width: 440px; text-align: center; max-height: 90vh; overflow-y: auto; }
+  .form-input { width: 100%; padding: 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); margin-top: 15px; outline: none; transition: 0.3s; font-family: 'Outfit', sans-serif; font-size: 14px; }
+  .form-input:focus { border-color: var(--accent); }
+  .btn-abort { width: 100%; margin-top: 15px; padding: 14px; background: transparent; border: 1px solid rgba(255, 77, 77, 0.2); color: #ff4d4d; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+  .btn-abort:hover { background: rgba(255, 77, 77, 0.1); border-color: #ff4d4d; }
+
+  /* ── Notepad & Feedback ── */
+  .char-bar { height: 8px; background: var(--surface2); border-radius: 10px; margin: 20px 0; overflow: hidden; }
+  #charBarFill { height: 100%; width: 0%; background: var(--accent); transition: width 0.3s; }
+  .setting-card { background: var(--surface); padding: 30px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+  .star { font-size: 34px; color: var(--muted); cursor: pointer; transition: 0.2s; padding: 0 4px; }
+  .star:hover, .star.active { color: var(--accent); transform: scale(1.2); }
+
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; padding: 14px 35px; border-radius: 50px; opacity: 0; transition: 0.3s; z-index: 2000; pointer-events: none; font-weight: 600; white-space: nowrap;}
+  .toast.show { opacity: 1; bottom: 50px; }
+
+  /* ── Notepad Enhancements ── */
+  .note-toolbar { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .note-tag { 
+    padding: 5px 14px; border-radius: 50px; border: 1px solid var(--border); 
+    background: var(--surface2); color: var(--muted); cursor: pointer; font-size: 12px; 
+    font-weight: 600; transition: 0.2s; 
+  }
+  .note-tag.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+  .note-title-input { 
+    width: 100%; padding: 12px 16px; border-radius: 12px 12px 0 0;
+    border: 1px solid var(--border); border-bottom: none;
+    background: var(--surface2); color: var(--text); outline: none;
+    font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600;
+    transition: 0.3s;
+  }
+  .note-title-input:focus { border-color: var(--accent); }
+  #noteArea { border-radius: 0 0 12px 12px !important; border-top: none !important; }
+  .saved-notes-list { margin-top: 24px; }
+  .saved-note-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 20px; margin-bottom: 10px; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    transition: 0.2s;
+  }
+  .saved-note-card:hover { border-color: var(--accent); }
+  .saved-note-card .sn-title { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .saved-note-card .sn-preview { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 400px; }
+  .saved-note-card .sn-meta { font-size: 11px; color: var(--accent); white-space: nowrap; margin-left: 12px; }
+  .sn-tag-badge { display: inline-block; padding: 2px 10px; border-radius: 50px; font-size: 10px; font-weight: 700; background: var(--accent-glow); color: var(--accent); margin-bottom: 6px; }
+  .del-note-btn { background: none; border: none; color: var(--red); cursor: pointer; font-size: 16px; padding: 2px 6px; opacity: 0.5; transition: 0.2s; }
+  .del-note-btn:hover { opacity: 1; }
+
+  /* ── Flashcard Mode ── */
+  .flashcard-page { max-width: 600px; margin: 0 auto; }
+  .flashcard-container { perspective: 1000px; margin: 40px auto; }
+  .flashcard {
+    width: 100%; height: 260px; position: relative;
+    transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face {
+    position: absolute; inset: 0;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 30px; text-align: center; backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .card-front { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
+  .card-back { transform: rotateY(180deg); background: var(--surface2); }
+  .card-face .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--muted); margin-bottom: 16px; }
+  .card-face .card-text { font-size: 18px; font-weight: 600; line-height: 1.5; }
+  .card-hint { font-size: 13px; color: var(--muted); margin-top: 20px; }
+  .flashcard-nav { display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 24px; }
+  .fc-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 12px 28px; border-radius: 50px; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; }
+  .fc-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .fc-counter { font-size: 15px; color: var(--muted); min-width: 80px; text-align: center; }
+  .fc-category-select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); margin-bottom: 20px; outline: none; font-family: 'Outfit', sans-serif; font-size: 14px; }
+  .fc-category-select:focus { border-color: var(--accent); }
+  .fc-score-bar { display: flex; gap: 16px; margin-bottom: 24px; }
+  .fc-score-chip { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; text-align: center; }
+  .fc-score-chip .fc-num { font-size: 20px; font-weight: 800; font-family: 'DM Serif Display'; }
+  .fc-score-chip.correct .fc-num { color: var(--green); }
+  .fc-score-chip.wrong .fc-num { color: var(--red); }
+  .fc-score-chip.skipped .fc-num { color: #f59e0b; }
+  .fc-score-chip .fc-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .fc-result-btns { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+  .fc-know { background: rgba(34,197,94,0.15); border: 1px solid var(--green); color: var(--green); padding: 10px 22px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 13px; transition: 0.2s; }
+  .fc-know:hover { background: rgba(34,197,94,0.3); }
+  .fc-dontknow { background: rgba(255,77,77,0.1); border: 1px solid var(--red); color: var(--red); padding: 10px 22px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 13px; transition: 0.2s; }
+  .fc-dontknow:hover { background: rgba(255,77,77,0.2); }
+
+  /* ── Timer ── */
+  .timer-ring-wrap { display: flex; justify-content: center; margin: 30px 0; }
+  .timer-ring { position: relative; width: 160px; height: 160px; }
+  .timer-ring svg { transform: rotate(-90deg); }
+  .timer-ring circle { fill: none; stroke: var(--border); stroke-width: 8; }
+  .timer-ring circle.prog { stroke: var(--accent); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+  .timer-digits { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-family: 'DM Serif Display'; font-size: 36px; color: var(--text); }
+  .timer-digits span { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-family: 'Outfit'; }
+  .timer-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── Bookmarks Page ── */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty-state .emoji { font-size: 48px; margin-bottom: 16px; }
+
+  /* ── Progress Page ── */
+  .progress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .prog-cat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .prog-cat-title { font-weight: 700; font-size: 13px; margin-bottom: 12px; }
+  .mini-bar { height: 6px; background: var(--surface2); border-radius: 10px; overflow: hidden; margin-bottom: 6px; }
+  .mini-bar-fill { height: 100%; background: var(--accent); border-radius: 10px; transition: width 0.5s ease; }
+  .mini-bar-stat { font-size: 11px; color: var(--muted); }
+
+  /* ── Highlight search match ── */
+  .search-highlight { background: var(--accent-glow); color: var(--accent); border-radius: 3px; padding: 0 2px; }
+
+  /* Kbd shortcuts hint */
+  .kbd { display: inline-block; padding: 2px 7px; border-radius: 5px; background: var(--surface2); border: 1px solid var(--border); font-size: 11px; font-family: monospace; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    h1 { font-size: 36px; }
+    .page { padding: 40px 20px; }
+    .progress-grid { grid-template-columns: 1fr; }
+    .stats-bar { gap: 10px; }
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<div class="toast" id="toast"></div>
+
+<nav class="navbar">
+  <div style="display:flex; align-items:center; gap:18px;">
+    <button onclick="toggleSidebar()" style="background:none; border:none; color:var(--text); font-size:26px; cursor:pointer;">☰</button>
+    <span class="nav-logo">CAREER PREP</span>
+  </div>
+  
+  <div class="nav-right-actions">
+    <div class="search-container" id="searchContainer">
+      <button class="search-trigger" onclick="toggleSearch(event)">🔍</button>
+      <input type="text" class="nav-search-input" id="navSearch" placeholder="Search questions..." oninput="handleSearch(this.value)">
+    </div>
+    <button class="mode-toggle-btn" onclick="toggleTheme()" title="Toggle theme">🌓</button>
+    <div id="authArea">
+      <button class="btn-action" onclick="openModal('login')">Login</button>
+    </div>
+  </div>
+</nav>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div style="padding: 30px; border-bottom: 1px solid var(--border); font-weight: 800; letter-spacing: 1px;">PORTAL NAVIGATION</div>
+  <nav>
+    <button class="sidebar-item active" id="side-home" onclick="navigate('home')">📚 Question Bank</button>
+    <button class="sidebar-item" id="side-flashcards" onclick="navigate('flashcards')">🃏 Flashcard Mode</button>
+    <button class="sidebar-item" id="side-bookmarks" onclick="navigate('bookmarks')">🔖 Bookmarks</button>
+    <button class="sidebar-item" id="side-progress" onclick="navigate('progress')">📊 My Progress</button>
+    <button class="sidebar-item" id="side-timer" onclick="navigate('timer')">⏱️ Practice Timer</button>
+    <button class="sidebar-item" id="side-notepad" onclick="navigate('notepad')">📝 Study Notes</button>
+    <button class="sidebar-item" id="side-settings" onclick="navigate('settings')">⚙️ Portal Settings</button>
+  </nav>
+  <div class="sidebar-progress">
+    <p>Overall Progress</p>
+    <div class="prog-bar"><div class="prog-bar-fill" id="sideProgFill" style="width:0%"></div></div>
+    <div class="prog-count" id="sideProgCount">0 / 0 completed</div>
+  </div>
+</aside>
+
+<!-- ── HOME PAGE ── -->
+<main class="page active" id="page-home">
+  <h1>Interview <em>Mastery.</em></h1>
+  <p style="color:var(--muted); margin-bottom:24px;">Select a module below to view detailed preparation strategies.</p>
+
+  <!-- Stats bar -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-chip"><span class="stat-num" id="totalQ">0</span><span class="stat-label">Total Questions</span></div>
+    <div class="stat-chip"><span class="stat-num" id="doneQ">0</span><span class="stat-label">Completed</span></div>
+    <div class="stat-chip"><span class="stat-num" id="bookmarkQ">0</span><span class="stat-label">Bookmarked</span></div>
+    <div class="stat-chip"><span class="stat-num" id="catQ">0</span><span class="stat-label">Categories</span></div>
+  </div>
+
+  <!-- Category filter chips -->
+  <div class="filter-bar" id="filterBar"></div>
+
+  <div id="faqContent"></div>
+</main>
+
+<!-- ── FLASHCARD PAGE ── -->
+<main class="page" id="page-flashcards">
+  <h1>Flash<em>cards.</em></h1>
+  <p style="color:var(--muted); margin-bottom:30px;">Flip to reveal answer. Mark if you know it.</p>
+  <div class="flashcard-page">
+    <select class="fc-category-select" id="fcCategorySelect" onchange="initFlashcards()">
+      <option value="all">All Categories</option>
+    </select>
+    <div class="fc-score-bar">
+      <div class="fc-score-chip correct"><div class="fc-num" id="fcCorrect">0</div><div class="fc-lbl">Know It</div></div>
+      <div class="fc-score-chip wrong"><div class="fc-num" id="fcWrong">0</div><div class="fc-lbl">Review</div></div>
+      <div class="fc-score-chip skipped"><div class="fc-num" id="fcSkipped">0</div><div class="fc-lbl">Skipped</div></div>
+    </div>
+    <div class="flashcard-container">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="card-face card-front">
+          <div class="card-label">Question</div>
+          <div class="card-text" id="fcQuestion">Loading...</div>
+          <div class="card-hint">Click to reveal answer</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-label">Answer</div>
+          <div class="card-text" id="fcAnswer"></div>
+        </div>
+      </div>
+    </div>
+    <div class="flashcard-nav">
+      <button class="fc-btn" onclick="prevCard()">← Prev</button>
+      <span class="fc-counter" id="fcCounter">1 / 1</span>
+      <button class="fc-btn" onclick="nextCard()">Next →</button>
+    </div>
+    <div class="fc-result-btns" id="fcResultBtns" style="display:none;">
+      <button class="fc-know" onclick="markCard('know')">✓ Know It</button>
+      <button class="fc-dontknow" onclick="markCard('dontknow')">✗ Review Later</button>
+      <button class="fc-btn" onclick="skipCard()">→ Skip</button>
+    </div>
+    <div style="text-align:center; margin-top:20px;">
+      <button class="btn-action" onclick="shuffleCards()" style="margin-right:10px;">🔀 Shuffle</button>
+      <button class="btn-action" onclick="resetFlashcards()" style="background: var(--surface2); color: var(--text);">↺ Reset</button>
+    </div>
+  </div>
+</main>
+
+<!-- ── BOOKMARKS PAGE ── -->
+<main class="page" id="page-bookmarks">
+  <h1>Book<em>marks.</em></h1>
+  <p style="color:var(--muted); margin-bottom:30px;">Questions you've saved for quick review.</p>
+  <div id="bookmarkContent"></div>
+</main>
+
+<!-- ── PROGRESS PAGE ── -->
+<main class="page" id="page-progress">
+  <h1>My <em>Progress.</em></h1>
+  <p style="color:var(--muted); margin-bottom:30px;">Track how many questions you've reviewed per category.</p>
+  <div class="setting-card" style="text-align:center; padding:20px 30px;">
+    <div class="stats-bar" style="justify-content:center;">
+      <div class="stat-chip"><span class="stat-num" id="pgDone">0</span><span class="stat-label">Done</span></div>
+      <div class="stat-chip"><span class="stat-num" id="pgTotal">0</span><span class="stat-label">Total</span></div>
+      <div class="stat-chip"><span class="stat-num" id="pgPct">0%</span><span class="stat-label">Complete</span></div>
+    </div>
+    <div class="char-bar" style="margin-top:0;"><div id="pgBarFill" style="height:100%; background:var(--accent); width:0%; transition:0.5s; border-radius:10px;"></div></div>
+  </div>
+  <div class="progress-grid" id="progressGrid"></div>
+  <div style="text-align:right; margin-top:16px;">
+    <button class="btn-abort" style="width:auto; padding:10px 24px;" onclick="resetProgress()">Reset Progress</button>
+  </div>
+</main>
+
+<!-- ── TIMER PAGE ── -->
+<main class="page" id="page-timer">
+  <h1>Practice <em>Timer.</em></h1>
+  <p style="color:var(--muted); margin-bottom:20px;">Simulate real interview timing pressure.</p>
+  <div class="setting-card">
+    <h4 style="margin-bottom:16px;">Set Duration</h4>
+    <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;">
+      <button class="filter-chip" onclick="setTimerDuration(60)">1 min</button>
+      <button class="filter-chip" onclick="setTimerDuration(120)">2 min</button>
+      <button class="filter-chip" onclick="setTimerDuration(180)">3 min</button>
+      <button class="filter-chip" onclick="setTimerDuration(300)">5 min</button>
+      <button class="filter-chip" onclick="setTimerDuration(600)">10 min</button>
+      <button class="filter-chip" onclick="setTimerDuration(1800)">30 min</button>
+    </div>
+    <div class="timer-ring-wrap">
+      <div class="timer-ring">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="70"/>
+          <circle cx="80" cy="80" r="70" class="prog" id="timerCircle" stroke-dasharray="439.82" stroke-dashoffset="0"/>
+        </svg>
+        <div class="timer-digits">
+          <span id="timerDisplay">05:00</span>
+          <span id="timerLabel">ready</span>
+        </div>
+      </div>
+    </div>
+    <div class="timer-controls">
+      <button class="btn-action" onclick="startTimer()" id="timerStartBtn">▶ Start</button>
+      <button class="btn-action" onclick="pauseTimer()" id="timerPauseBtn" style="background:var(--surface2); color:var(--text);">⏸ Pause</button>
+      <button class="btn-action" onclick="resetTimer()" style="background:var(--surface2); color:var(--text);">↺ Reset</button>
+    </div>
+    <p style="text-align:center; margin-top:20px; font-size:13px; color:var(--muted);">
+      <span class="kbd">Space</span> start/pause &nbsp; <span class="kbd">R</span> reset
+    </p>
+  </div>
+  <div class="setting-card">
+    <h4 style="margin-bottom:10px;">Session Log</h4>
+    <div id="timerLog" style="font-size:13px; color:var(--muted); min-height:40px;">No sessions yet.</div>
+  </div>
+</main>
+
+<!-- ── NOTEPAD PAGE ── -->
+<main class="page" id="page-notepad">
+  <h1>Study <em>Notes.</em></h1>
+  <p style="color:var(--muted); margin-bottom:24px;">Draft answers, tag them, and save for later review.</p>
+
+  <div class="setting-card">
+    <h4 style="margin-bottom:14px;">New Note</h4>
+    <div class="note-toolbar">
+      <span style="font-size:12px; color:var(--muted); align-self:center; margin-right:4px;">Tag:</span>
+      <button class="note-tag selected" data-tag="General" onclick="selectTag(this)">General</button>
+      <button class="note-tag" data-tag="Strengths" onclick="selectTag(this)">Strengths</button>
+      <button class="note-tag" data-tag="Experience" onclick="selectTag(this)">Experience</button>
+      <button class="note-tag" data-tag="Goals" onclick="selectTag(this)">Goals</button>
+      <button class="note-tag" data-tag="Behavioral" onclick="selectTag(this)">Behavioral</button>
+    </div>
+    <input type="text" class="note-title-input" id="noteTitle" placeholder="Note title...">
+    <textarea id="noteArea" class="form-input" style="height:200px; border-radius:0 0 12px 12px;" placeholder="Draft your answer here..." maxlength="1000" oninput="updateNote()"></textarea>
+    <div class="char-bar"><div id="charBarFill"></div></div>
+    <div style="display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--muted);">
+      <span id="charCount">0 / 1000 Characters</span>
+      <div style="display:flex; gap:10px;">
+        <button onclick="clearNote()" style="background:none; border:none; color:#ff4d4d; cursor:pointer; font-weight:700;">CLEAR</button>
+        <button class="btn-action" style="padding:8px 20px;" onclick="saveNote()">💾 Save Note</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="saved-notes-list">
+    <h4 style="margin-bottom:12px; font-size:13px; text-transform:uppercase; letter-spacing:2px; color:var(--accent);">Saved Notes</h4>
+    <div id="savedNotesList"></div>
+  </div>
+</main>
+
+<!-- ── SETTINGS PAGE ── -->
+<main class="page" id="page-settings">
+  <h2>Settings</h2>
+  <div class="setting-card">
+    <h4 style="margin-bottom:10px;">Exam Mode</h4>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Globally reveal all answer keys for academic review.</p>
+    <button class="btn-action" id="masterBtn" onclick="toggleMaster()">ENABLE EXAM MODE</button>
+  </div>
+
+  <div class="setting-card">
+    <h4 style="margin-bottom:10px;">Keyboard Shortcuts</h4>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:14px;">Speed up navigation with keyboard shortcuts.</p>
+    <div style="display:grid; grid-template-columns:auto 1fr; gap:8px 16px; font-size:13px; color:var(--muted);">
+      <span class="kbd">/</span><span>Focus search</span>
+      <span class="kbd">Esc</span><span>Close modals / search</span>
+      <span class="kbd">Space</span><span>Start / pause timer</span>
+      <span class="kbd">R</span><span>Reset timer</span>
+    </div>
+  </div>
+
+  <div class="setting-card">
+    <h3>System Feedback</h3>
+    <div style="display:flex; gap:12px; margin: 15px 0 25px;">
+      <span class="star" onclick="setRating(1)">★</span>
+      <span class="star" onclick="setRating(2)">★</span>
+      <span class="star" onclick="setRating(3)">★</span>
+      <span class="star" onclick="setRating(4)">★</span>
+      <span class="star" onclick="setRating(5)">★</span>
+    </div>
+    <textarea class="form-input" id="feedbackNote" style="height:100px;" placeholder="Provide feedback..."></textarea>
+    <button class="btn-action" style="width:100%; margin-top:20px;" onclick="sendFeedback()">Submit Report</button>
+  </div>
+
+  <div class="setting-card">
+    <h4 style="margin-bottom:10px; color:var(--red);">Danger Zone</h4>
+    <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Clear all local data including bookmarks, progress, and notes.</p>
+    <button class="btn-abort" style="width:auto; padding:10px 24px;" onclick="clearAllData()">🗑️ Wipe All Data</button>
+  </div>
+</main>
+
+<!-- ── AUTH MODAL ── -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div id="loginView">
+      <h2 style="margin-bottom:15px; font-family:'DM Serif Display';">Login Portal</h2>
+      <input type="email" class="form-input" id="lEmail" placeholder="Email Address">
+      <input type="password" class="form-input" id="lPass" placeholder="Password">
+      <button class="btn-action" style="width:100%; margin-top:25px;" onclick="handleAuth('login')">Login</button>
+      <p style="margin-top:25px; font-size:13px; color:var(--muted);">No account? <a href="javascript:void(0)" onclick="openModal('reg')" style="color:var(--accent); font-weight:bold;">Register</a></p>
+    </div>
+    <div id="registerView" style="display:none;">
+      <h2 style="margin-bottom:15px; font-family:'DM Serif Display';">Register Account</h2>
+      <input type="text" class="form-input" id="rName" placeholder="Full Name">
+      <input type="email" class="form-input" id="rEmail" placeholder="Email">
+      <input type="password" class="form-input" id="rPass" placeholder="Set Password">
+      <p style="margin-top:15px; font-size:11px; color:var(--accent);">AVATAR WILL BE AUTO-GENERATED</p>
+      <button class="btn-action" style="width:100%; margin-top:25px;" onclick="handleAuth('reg')">Sign Up</button>
+      <p style="margin-top:25px; font-size:13px; color:var(--muted);">Have account? <a href="javascript:void(0)" onclick="openModal('login')" style="color:var(--accent); font-weight:bold;">Login</a></p>
+    </div>
+    <div id="profileView" style="display:none;">
+        <img id="profImg" src="" class="user-avatar" style="width:80px; height:80px; margin-bottom:15px;">
+        <h2 id="profName" style="font-family:'DM Serif Display';">User</h2>
+        <p id="profEmail" style="color:var(--muted); margin-bottom:20px;"></p>
+        <div style="background:var(--surface2); border-radius:12px; padding:16px; margin-bottom:20px; text-align:left;">
+          <p style="font-size:12px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Session Stats</p>
+          <p style="font-size:14px; color:var(--text);">✅ <span id="profDone">0</span> questions done</p>
+          <p style="font-size:14px; color:var(--text); margin-top:6px;">🔖 <span id="profBookmarks">0</span> bookmarked</p>
+        </div>
+        <button class="btn-action" style="width:100%;" onclick="closeModal()">CLOSE PROFILE</button>
+    </div>
+    <button class="btn-abort" onclick="closeModal()">CANCEL</button>
+  </div>
+</div>
+
+<script>
+  const STRUCTURED_DATA = [
+    { category: "Getting to Know You", items: [{ q: "Tell me about yourself / your work experience", a: "Focus on your current role and why you are a good fit." }, { q: "Walk me through your resume", a: "Tell your career journey in a clear story." }, { q: "How would you describe yourself?", a: "Mention strengths that match the job." }, { q: "What do you know about the company?", a: "Show you've researched their mission." }] },
+    { category: "Strengths, Skills & Fit", items: [{ q: "What are your strengths?", a: "Share specific skills with examples." }, { q: "What are your weaknesses?", a: "Mention a real weakness and how you improve." }, { q: "What is your work style?", a: "Explain how you handle teamwork or solo tasks." }, { q: "How do you stay organized?", a: "Talk about planners or digital tools." }] },
+    { category: "Experience & Achievements", items: [{ q: "What is your greatest professional achievement?", a: "Use the STAR method to explain your impact." }, { q: "Tell me about a challenge or conflict you've faced", a: "Focus on how you solved it professionally." }, { q: "Tell me about a time you demonstrated leadership", a: "Show initiative even if you weren't the boss." }, { q: "Tell me about a time you failed", a: "Explain the lesson learned from the mistake." }] },
+    { category: "Career Decisions & Goals", items: [{ q: "Why are you leaving your current job?", a: "Stay positive about growth opportunities." }, { q: "Can you explain why you changed career paths?", a: "Highlight your transferable skills." }, { q: "How do you plan to achieve your career goals?", a: "Discuss short and long-term milestones." }, { q: "What's your dream job?", a: "Connect it to the current role." }] },
+    { category: "Mindset & Motivation", items: [{ q: "What motivates you?", a: "Mention learning, solving puzzles, or helping others." }, { q: "What are you passionate about?", a: "Show your personality and drive." }, { q: "Do you consider yourself successful?", a: "Say yes based on reaching your goals." }, { q: "How do you define success?", a: "Personal fulfillment and hitting targets." }] },
+    { category: "Workplace & Team Skills", items: [{ q: "What makes an effective team?", a: "Trust, communication, and clear goals." }, { q: "Describe your leadership style", a: "Supportive, delegative, or direct approach." }, { q: "How is your previous experience relevant?", a: "Bridge your past to this new job." }, { q: "Can you work under pressure?", a: "Share a time you stayed calm." }] },
+    { category: "Personal & Behavioral", items: [{ q: "If you were an animal, which one would you be?", a: "A creative way to show your work traits." }, { q: "How do you define success? (Part 2)", a: "Impact and reliability." }, { q: "What do you think we could improve?", a: "Respectful, constructive ideas." }] },
+    { category: "Job-Specific & Practical", items: [{ q: "What are your salary expectations?", a: "Provide a researched range." }, { q: "When can you start?", a: "Honest timeline of availability." }, { q: "Do you have any questions for us?", a: "Always ask about team culture or goals." }] }
+  ];
+
+  // ── State ──
+  let masterActive = false;
+  let currentUser = null;
+  let bookmarks = new Set(JSON.parse(localStorage.getItem('cp_bookmarks') || '[]'));
+  let done = new Set(JSON.parse(localStorage.getItem('cp_done') || '[]'));
+  let savedNotes = JSON.parse(localStorage.getItem('cp_notes') || '[]');
+  let activeNoteTag = 'General';
+
+  // Flashcard state
+  let fcDeck = [];
+  let fcIndex = 0;
+  let fcCorrect = 0, fcWrong = 0, fcSkipped = 0;
+  let fcFlipped = false;
+
+  // Timer state
+  let timerDuration = 300;
+  let timerRemaining = 300;
+  let timerRunning = false;
+  let timerInterval = null;
+  let timerLog = JSON.parse(localStorage.getItem('cp_timerlog') || '[]');
+
+  const allItems = STRUCTURED_DATA.flatMap(c => c.items.map(i => ({...i, category: c.category})));
+
+  window.onload = () => {
+    renderHome(STRUCTURED_DATA);
+    renderFilterChips();
+    updateStats();
+    updateSidebarProgress();
+    renderSavedNotes();
+    renderTimerLog();
+    populateFcCategories();
+    initFlashcards();
+    updateNote();
+    history.replaceState({page: 'home'}, "Home", "");
+  };
+
+  window.onpopstate = function(e) {
+    if (e.state && e.state.page) navigate(e.state.page, true);
+  };
+
+  // ── Keyboard shortcuts ──
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === '/') { e.preventDefault(); document.getElementById('searchContainer').classList.add('active'); document.getElementById('navSearch').focus(); }
+    if (e.key === 'Escape') { closeModal(); document.getElementById('searchContainer').classList.remove('active'); }
+    if (e.key === ' ') { e.preventDefault(); if (document.getElementById('page-timer').classList.contains('active')) { timerRunning ? pauseTimer() : startTimer(); } }
+    if (e.key === 'r' || e.key === 'R') { if (document.getElementById('page-timer').classList.contains('active')) resetTimer(); }
+  });
+
+  // ── Render Home ──
+  function renderHome(data, searchTerm = '') {
+    const container = document.getElementById('faqContent');
+    container.innerHTML = '';
+    let qCounter = 1;
+    data.forEach(cat => {
+      const section = document.createElement('div');
+      section.innerHTML = `<div class="section-title">${cat.category}</div>`;
+      cat.items.forEach(item => {
+        const id = item.q;
+        const isBookmarked = bookmarks.has(id);
+        const isDone = done.has(id);
+        const highlightQ = searchTerm ? item.q.replace(new RegExp(`(${searchTerm})`, 'gi'), '<span class="search-highlight">$1</span>') : item.q;
+        const div = document.createElement('div');
+        div.className = 'faq-item' + (isDone ? ' done-item' : '');
+        div.style.opacity = isDone ? '0.65' : '1';
+        div.innerHTML = `
+          <div class="faq-q" onclick="this.parentElement.classList.toggle('active')">
+            <span class="q-num">${qCounter.toString().padStart(2, '0')}</span>
+            <span style="flex:1;">${highlightQ}</span>
+            <div class="faq-actions" onclick="event.stopPropagation()">
+              <button class="faq-btn ${isBookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${id.replace(/'/g,"\\'")}', this)" title="Bookmark">🔖</button>
+              <button class="faq-btn ${isDone ? 'done' : ''}" onclick="toggleDone('${id.replace(/'/g,"\\'")}', this)" title="Mark as done">✓</button>
+            </div>
+          </div>
+          <div class="faq-a">${item.a}</div>`;
+        section.appendChild(div);
+        qCounter++;
+      });
+      container.appendChild(section);
+    });
+    if (data.length === 0) container.innerHTML = '<div class="empty-state"><div class="emoji">🔍</div><p>No questions matched your search.</p></div>';
+  }
+
+  // ── Filter Chips ──
+  function renderFilterChips() {
+    const bar = document.getElementById('filterBar');
+    bar.innerHTML = '<button class="filter-chip active" onclick="applyFilter(\'all\', this)">All</button>';
+    STRUCTURED_DATA.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-chip';
+      btn.textContent = cat.category;
+      btn.onclick = function() { applyFilter(cat.category, this); };
+      bar.appendChild(btn);
+    });
+  }
+
+  function applyFilter(cat, el) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    const data = cat === 'all' ? STRUCTURED_DATA : STRUCTURED_DATA.filter(c => c.category === cat);
+    renderHome(data);
+  }
+
+  // ── Stats ──
+  function updateStats() {
+    const total = allItems.length;
+    document.getElementById('totalQ').textContent = total;
+    document.getElementById('doneQ').textContent = done.size;
+    document.getElementById('bookmarkQ').textContent = bookmarks.size;
+    document.getElementById('catQ').textContent = STRUCTURED_DATA.length;
+    updateSidebarProgress();
+    updateProgressPage();
+    if (document.getElementById('profDone')) document.getElementById('profDone').textContent = done.size;
+    if (document.getElementById('profBookmarks')) document.getElementById('profBookmarks').textContent = bookmarks.size;
+  }
+
+  function updateSidebarProgress() {
+    const total = allItems.length;
+    const pct = total ? Math.round(done.size / total * 100) : 0;
+    document.getElementById('sideProgFill').style.width = pct + '%';
+    document.getElementById('sideProgCount').textContent = `${done.size} / ${total} completed`;
+  }
+
+  // ── Bookmark / Done ──
+  function toggleBookmark(id, btn) {
+    if (bookmarks.has(id)) { bookmarks.delete(id); btn.classList.remove('bookmarked'); showToast("BOOKMARK REMOVED"); }
+    else { bookmarks.add(id); btn.classList.add('bookmarked'); showToast("📌 BOOKMARKED"); }
+    localStorage.setItem('cp_bookmarks', JSON.stringify([...bookmarks]));
+    updateStats();
+  }
+
+  function toggleDone(id, btn) {
+    if (done.has(id)) { done.delete(id); btn.classList.remove('done'); }
+    else { done.add(id); btn.classList.add('done'); showToast("✅ MARKED DONE"); }
+    localStorage.setItem('cp_done', JSON.stringify([...done]));
+    updateStats();
+    const faqItem = btn.closest('.faq-item');
+    if (faqItem) { faqItem.style.opacity = done.has(id) ? '0.65' : '1'; }
+  }
+
+  // ── Bookmarks Page ──
+  function renderBookmarksPage() {
+    const container = document.getElementById('bookmarkContent');
+    container.innerHTML = '';
+    const items = allItems.filter(i => bookmarks.has(i.q));
+    if (items.length === 0) {
+      container.innerHTML = '<div class="empty-state"><div class="emoji">🔖</div><p>No bookmarks yet. Bookmark questions from the Question Bank.</p></div>';
+      return;
+    }
+    items.forEach((item, idx) => {
+      const div = document.createElement('div');
+      div.className = 'faq-item';
+      div.innerHTML = `
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('active')">
+          <span class="q-num">${(idx+1).toString().padStart(2,'0')}</span>
+          <span style="flex:1;">${item.q}</span>
+          <div class="faq-actions" onclick="event.stopPropagation()">
+            <span style="font-size:11px; color:var(--muted);">${item.category}</span>
+            <button class="faq-btn bookmarked" onclick="removeBookmarkFromPage('${item.q.replace(/'/g,"\\'")}', this.closest('.faq-item'))">🔖</button>
+          </div>
+        </div>
+        <div class="faq-a">${item.a}</div>`;
+      container.appendChild(div);
+    });
+  }
+
+  function removeBookmarkFromPage(id, el) {
+    bookmarks.delete(id);
+    localStorage.setItem('cp_bookmarks', JSON.stringify([...bookmarks]));
+    el.remove();
+    updateStats();
+    showToast("BOOKMARK REMOVED");
+    if (document.querySelectorAll('#bookmarkContent .faq-item').length === 0) renderBookmarksPage();
+  }
+
+  // ── Progress Page ──
+  function updateProgressPage() {
+    const total = allItems.length;
+    const d = done.size;
+    const pct = total ? Math.round(d / total * 100) : 0;
+    document.getElementById('pgDone').textContent = d;
+    document.getElementById('pgTotal').textContent = total;
+    document.getElementById('pgPct').textContent = pct + '%';
+    document.getElementById('pgBarFill').style.width = pct + '%';
+
+    const grid = document.getElementById('progressGrid');
+    grid.innerHTML = '';
+    STRUCTURED_DATA.forEach(cat => {
+      const catDone = cat.items.filter(i => done.has(i.q)).length;
+      const catTotal = cat.items.length;
+      const catPct = Math.round(catDone / catTotal * 100);
+      const card = document.createElement('div');
+      card.className = 'prog-cat-card';
+      card.innerHTML = `
+        <div class="prog-cat-title">${cat.category}</div>
+        <div class="mini-bar"><div class="mini-bar-fill" style="width:${catPct}%"></div></div>
+        <div class="mini-bar-stat">${catDone} / ${catTotal} done (${catPct}%)</div>`;
+      grid.appendChild(card);
+    });
+  }
+
+  function resetProgress() {
+    if (!confirm('Reset all progress? This cannot be undone.')) return;
+    done.clear();
+    localStorage.setItem('cp_done', '[]');
+    updateStats();
+    renderHome(STRUCTURED_DATA);
+    showToast("PROGRESS RESET");
+  }
+
+  // ── Flashcards ──
+  function populateFcCategories() {
+    const sel = document.getElementById('fcCategorySelect');
+    STRUCTURED_DATA.forEach(cat => {
+      const opt = document.createElement('option');
+      opt.value = cat.category;
+      opt.textContent = cat.category;
+      sel.appendChild(opt);
+    });
+  }
+
+  function initFlashcards() {
+    const cat = document.getElementById('fcCategorySelect').value;
+    fcDeck = cat === 'all' ? [...allItems] : allItems.filter(i => i.category === cat);
+    fcIndex = 0; fcCorrect = 0; fcWrong = 0; fcSkipped = 0;
+    updateFcScores();
+    showCard();
+  }
+
+  function showCard() {
+    if (!fcDeck.length) return;
+    fcFlipped = false;
+    document.getElementById('flashcard').classList.remove('flipped');
+    document.getElementById('fcQuestion').textContent = fcDeck[fcIndex].q;
+    document.getElementById('fcAnswer').textContent = fcDeck[fcIndex].a;
+    document.getElementById('fcCounter').textContent = `${fcIndex + 1} / ${fcDeck.length}`;
+    document.getElementById('fcResultBtns').style.display = 'none';
+  }
+
+  function flipCard() {
+    fcFlipped = !fcFlipped;
+    document.getElementById('flashcard').classList.toggle('flipped', fcFlipped);
+    if (fcFlipped) document.getElementById('fcResultBtns').style.display = 'flex';
+  }
+
+  function nextCard() {
+    if (fcIndex < fcDeck.length - 1) { fcIndex++; showCard(); }
+    else showToast("🎉 DECK COMPLETE!");
+  }
+
+  function prevCard() {
+    if (fcIndex > 0) { fcIndex--; showCard(); }
+  }
+
+  function markCard(type) {
+    if (type === 'know') fcCorrect++;
+    else fcWrong++;
+    updateFcScores();
+    if (fcIndex < fcDeck.length - 1) { fcIndex++; showCard(); }
+    else showToast("🎉 DECK COMPLETE! " + fcCorrect + " known, " + fcWrong + " to review.");
+  }
+
+  function skipCard() {
+    fcSkipped++;
+    updateFcScores();
+    nextCard();
+  }
+
+  function shuffleCards() {
+    for (let i = fcDeck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [fcDeck[i], fcDeck[j]] = [fcDeck[j], fcDeck[i]];
+    }
+    fcIndex = 0; showCard(); showToast("🔀 DECK SHUFFLED");
+  }
+
+  function resetFlashcards() { initFlashcards(); showToast("↺ RESET"); }
+
+  function updateFcScores() {
+    document.getElementById('fcCorrect').textContent = fcCorrect;
+    document.getElementById('fcWrong').textContent = fcWrong;
+    document.getElementById('fcSkipped').textContent = fcSkipped;
+  }
+
+  // ── Timer ──
+  const CIRC = 439.82;
+  function setTimerDuration(sec) {
+    timerDuration = sec; timerRemaining = sec;
+    updateTimerDisplay();
+    document.getElementById('timerCircle').style.strokeDashoffset = '0';
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function updateTimerDisplay() {
+    const m = Math.floor(timerRemaining / 60).toString().padStart(2,'0');
+    const s = (timerRemaining % 60).toString().padStart(2,'0');
+    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+    const pct = 1 - (timerRemaining / timerDuration);
+    document.getElementById('timerCircle').style.strokeDashoffset = (CIRC * pct).toString();
+  }
+
+  function startTimer() {
+    if (timerRunning || timerRemaining <= 0) return;
+    timerRunning = true;
+    document.getElementById('timerLabel').textContent = 'running';
+    timerInterval = setInterval(() => {
+      timerRemaining--;
+      updateTimerDisplay();
+      if (timerRemaining <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timerLabel').textContent = 'done!';
+        showToast("⏰ TIME'S UP!");
+        const entry = { dur: timerDuration, ts: new Date().toLocaleTimeString() };
+        timerLog.unshift(entry);
+        if (timerLog.length > 5) timerLog.pop();
+        localStorage.setItem('cp_timerlog', JSON.stringify(timerLog));
+        renderTimerLog();
+      }
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    if (!timerRunning) return;
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timerLabel').textContent = 'paused';
+  }
+
+  function resetTimer() {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    timerRemaining = timerDuration;
+    updateTimerDisplay();
+    document.getElementById('timerLabel').textContent = 'ready';
+  }
+
+  function renderTimerLog() {
+    const el = document.getElementById('timerLog');
+    if (!timerLog.length) { el.textContent = 'No sessions yet.'; return; }
+    el.innerHTML = timerLog.map(e => `<div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ ${Math.floor(e.dur/60)}m ${e.dur%60}s session — <span style="color:var(--accent)">${e.ts}</span></div>`).join('');
+  }
+
+  // ── Notes ──
+  function selectTag(btn) {
+    document.querySelectorAll('.note-tag').forEach(t => t.classList.remove('selected'));
+    btn.classList.add('selected');
+    activeNoteTag = btn.dataset.tag;
+  }
+
+  function updateNote() {
+    const el = document.getElementById('noteArea');
+    const len = el.value.length;
+    document.getElementById('charCount').textContent = `${len} / 1000 Characters`;
+    document.getElementById('charBarFill').style.width = (len / 1000 * 100) + '%';
+  }
+
+  function clearNote() {
+    document.getElementById('noteArea').value = '';
+    document.getElementById('noteTitle').value = '';
+    updateNote();
+    showToast("DRAFT CLEARED");
+  }
+
+  function saveNote() {
+    const title = document.getElementById('noteTitle').value.trim();
+    const content = document.getElementById('noteArea').value.trim();
+    if (!content) { showToast("⚠️ NOTE IS EMPTY"); return; }
+    const note = { id: Date.now(), title: title || 'Untitled Note', content, tag: activeNoteTag, date: new Date().toLocaleDateString() };
+    savedNotes.unshift(note);
+    localStorage.setItem('cp_notes', JSON.stringify(savedNotes));
+    clearNote();
+    renderSavedNotes();
+    showToast("💾 NOTE SAVED");
+  }
+
+  function renderSavedNotes() {
+    const container = document.getElementById('savedNotesList');
+    if (!savedNotes.length) { container.innerHTML = '<div style="color:var(--muted); font-size:13px; text-align:center; padding:20px;">No notes saved yet.</div>'; return; }
+    container.innerHTML = savedNotes.map((n, idx) => `
+      <div class="saved-note-card" onclick="loadNote(${idx})">
+        <div style="flex:1; min-width:0;">
+          <div class="sn-tag-badge">${n.tag}</div>
+          <div class="sn-title">${n.title}</div>
+          <div class="sn-preview">${n.content}</div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+          <span class="sn-meta">${n.date}</span>
+          <button class="del-note-btn" onclick="event.stopPropagation(); deleteNote(${idx})">🗑</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function loadNote(idx) {
+    const n = savedNotes[idx];
+    document.getElementById('noteTitle').value = n.title;
+    document.getElementById('noteArea').value = n.content;
+    updateNote();
+    document.querySelectorAll('.note-tag').forEach(t => {
+      t.classList.toggle('selected', t.dataset.tag === n.tag);
+    });
+    activeNoteTag = n.tag;
+    showToast("NOTE LOADED");
+  }
+
+  function deleteNote(idx) {
+    savedNotes.splice(idx, 1);
+    localStorage.setItem('cp_notes', JSON.stringify(savedNotes));
+    renderSavedNotes();
+    showToast("🗑 NOTE DELETED");
+  }
+
+  // ── Search ──
+  function toggleSearch(e) {
+    e.stopPropagation();
+    const container = document.getElementById('searchContainer');
+    container.classList.toggle('active');
+    if(container.classList.contains('active')) document.getElementById('navSearch').focus();
+  }
+
+  document.addEventListener('click', function(e) {
+    const container = document.getElementById('searchContainer');
+    if (!container.contains(e.target)) container.classList.remove('active');
+  });
+
+  function handleSearch(val) {
+    const q = val.toLowerCase().trim();
+    if (!q) { renderHome(STRUCTURED_DATA); return; }
+    const filtered = STRUCTURED_DATA.map(cat => ({...cat, items: cat.items.filter(i => i.q.toLowerCase().includes(q) || i.a.toLowerCase().includes(q))})).filter(cat => cat.items.length > 0);
+    renderHome(filtered, q);
+  }
+
+  // ── Master Mode ──
+  function toggleMaster() {
+    masterActive = !masterActive;
+    const btn = document.getElementById('masterBtn');
+    document.getElementById('page-home').classList.toggle('master-unlocked', masterActive);
+    btn.textContent = masterActive ? "RESTRICT ACCESS" : "ENABLE EXAM MODE";
+    showToast(masterActive ? "EXAM MODE ACTIVE" : "MANUAL MODE ACTIVE");
+  }
+
+  // ── Auth Modal ──
+  function openModal(view) {
+    document.getElementById('modalOverlay').classList.add('active');
+    document.getElementById('loginView').style.display = view === 'login' ? 'block' : 'none';
+    document.getElementById('registerView').style.display = view === 'reg' ? 'block' : 'none';
+    const pv = document.getElementById('profileView');
+    pv.style.display = view === 'profile' ? 'block' : 'none';
+    if (view === 'profile') {
+      document.getElementById('profDone').textContent = done.size;
+      document.getElementById('profBookmarks').textContent = bookmarks.size;
+    }
+  }
+
+  function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); }
+  function handleOverlayClick(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+
+  function handleAuth(type) {
+    const name = type === 'reg' ? document.getElementById('rName').value : "Member";
+    const email = type === 'reg' ? document.getElementById('rEmail').value : document.getElementById('lEmail').value;
+    currentUser = { name: name || "User", email: email || "user@portal.com", img: `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}` };
+    document.getElementById('authArea').innerHTML = `<img src="${currentUser.img}" class="user-avatar" onclick="openModal('profile')">`;
+    document.getElementById('profImg').src = currentUser.img;
+    document.getElementById('profName').textContent = currentUser.name;
+    document.getElementById('profEmail').textContent = currentUser.email;
+    closeModal();
+    showToast(type === 'reg' ? "REGISTRATION COMPLETE" : "LOGIN SUCCESS");
+  }
+
+  function toggleTheme() { document.body.setAttribute('data-theme', document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
+
+  function navigate(id, isBack = false) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    const sideEl = document.getElementById('side-' + id);
+    if (sideEl) sideEl.classList.add('active');
+    if (!isBack) history.pushState({page: id}, "", "");
+    if (window.innerWidth < 800) toggleSidebar();
+    // Trigger page-specific renders
+    if (id === 'bookmarks') renderBookmarksPage();
+    if (id === 'progress') updateProgressPage();
+  }
+
+  function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebarOverlay').classList.toggle('active'); }
+
+  function setRating(v) { document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < v)); }
+  function sendFeedback() { showToast("LOG SUBMITTED"); setRating(0); document.getElementById('feedbackNote').value = ''; }
+  
+  function clearAllData() {
+    if (!confirm('Wipe ALL portal data? This cannot be undone.')) return;
+    bookmarks.clear(); done.clear(); savedNotes = []; timerLog = [];
+    localStorage.clear();
+    updateStats(); renderSavedNotes(); renderHome(STRUCTURED_DATA);
+    showToast("🗑️ ALL DATA WIPED");
+  }
+
+  function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); }
+</script>
+</body>
+</html>
